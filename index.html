@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dividend Details</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dividend Details</h1>
+    <table id="dividend-table">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Dividend</th>
+                <th>Ex-Dividend Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be populated here -->
+        </tbody>
+    </table>
+
+    <script>
+        fetch('https://www.moneycontrol.com/stocks/marketinfo/dividends_declared/index.php')
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const tableRows = doc.querySelectorAll('.tbldata14 tr');
+
+                const tbody = document.querySelector('#dividend-table tbody');
+                tableRows.forEach(row => {
+                    const columns = row.querySelectorAll('td');
+                    const company = columns[0].textContent.trim();
+                    const dividend = columns[1].textContent.trim();
+                    const exDividendDate = columns[2].textContent.trim();
+
+                    const tr = document.createElement('tr');
+                    const tdCompany = document.createElement('td');
+                    const tdDividend = document.createElement('td');
+                    const tdExDividendDate = document.createElement('td');
+
+                    tdCompany.textContent = company;
+                    tdDividend.textContent = dividend;
+                    tdExDividendDate.textContent = exDividendDate;
+
+                    tr.appendChild(tdCompany);
+                    tr.appendChild(tdDividend);
+                    tr.appendChild(tdExDividendDate);
+
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching dividend details:', error);
+            });
+    </script>
+</body>
+</html>
